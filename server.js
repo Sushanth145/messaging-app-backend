@@ -15,16 +15,22 @@ app.use(cors({
 }));
 
 // **Configure Sessions Correctly**
-app.use(session({
-  store: new pgSession({
-    pool: pool,
-    tableName: 'sessions'
-  }),
-  secret: 'your_secret_key', // Change this to a secure key
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 } // 1 day
-}));
+app.use(
+  session({
+    store: new pgSession({
+      pool: pool,
+      tableName: "sessions",
+    }),
+    secret: "your_secret_key", // Change this to a secure key
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Set to true if using HTTPS
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
+  })
+);
 
 // **Import Routes AFTER initializing session**
 const authRoutes = require('./routes/auth');
