@@ -17,7 +17,7 @@ app.use(cors({
 // **Configure Sessions Correctly**
 app.use(session({
   store: new pgSession({
-    pool: pool, 
+    pool: pool,
     tableName: 'sessions'
   }),
   secret: 'your_secret_key', // Change this to a secure key
