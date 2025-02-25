@@ -8,7 +8,6 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 
-const cors = require("cors");
 
 app.use(cors({
   origin: "http://localhost:3000", // Allow frontend access
