@@ -9,6 +9,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const cors = require("cors");
+
+app.use(cors({
+  origin: "http://localhost:3000", // Allow frontend access
+  credentials: true // Important for session-based auth
+}));
+
 // **Configure Sessions Correctly**
 app.use(session({
   store: new pgSession({
