@@ -22,24 +22,27 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    if (result.rows.length === 0) return res.status(400).json({ error: "Invalid username" });
+    const userResult = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+    if (userResult.rows.length === 0) return res.status(401).json({ error: "User not found" });
 
-    const user = result.rows[0];
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) return res.status(400).json({ error: "Invalid password" });
+    const user = userResult.rows[0];
+    if (user.password !== password) return res.status(401).json({ error: "Incorrect password" });
 
     req.session.user = { id: user.id, username: user.username };
+    await new Promise((resolve) => req.session.save(resolve)); // Ensures session is saved before sending response
+
+    console.log("Session after login:", req.session); // Debugging
     res.json({ message: "Login successful", user: req.session.user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Login failed" });
   }
 });
+
 // Logout
 router.post('/logout', (req, res) => {
   req.session.destroy(() => res.json({ message: "Logged out" }));
